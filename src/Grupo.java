@@ -125,7 +125,7 @@ public class Grupo {
 		char subtabela[][];
 		int subtabeladeposicoes[][];
 		//pegando todas as combinações possíveis
-		for(int x = 0; x < Math.pow(2,tamanho); x++){
+		for(int x = 0; x <= Math.pow(2,tamanho); x++){
 			n = Integer.toBinaryString(x);
 			for(i=n.length(); i<tamanho; i++)
 				n="0"+n;
@@ -172,19 +172,19 @@ public class Grupo {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		Grupo g = new Grupo("table 2.txt");
+		Grupo g = new Grupo("table 1.txt");
 		File file = new File("Subgrupos.txt");
 		if ( file.exists()) {
 		   file.delete();
 		}
 		g.imprimeTabela(g.tabela,g.tamanho);
 		//g.imprimeTabelaDePosicoes();
-		if(g.testaGrupo(g.tabela,g.tabeladeposicoes,g.tamanho)) System.out.println("É grupo");
-		else System.out.println("Não é grupo");
+		if(g.testaGrupo(g.tabela,g.tabeladeposicoes,g.tamanho)) System.out.println("Eh grupo");
+		else System.out.println("Nao eh grupo");
 		g.subgrupos();
 		Grafo f = new Grafo();
 		f.leitor("Subgrupos.txt");
-		System.out.println("Aqui começa a imprimir");
+		System.out.println("Aqui comeca a imprimir");
 		f.imprimeSubgrupos();
 	}
 
