@@ -46,17 +46,14 @@ public class Grupo {
 		buffRead.close(); 
 	} 
 	
-	public static void escritor(String path) throws IOException {
-		BufferedWriter buffWrite = new BufferedWriter(new FileWriter(path));
-		String linha = ""; 
-		Scanner in = new Scanner(System.in); 
-		System.out.println("Escreva algo: "); 
-		linha = in.nextLine(); 
-		buffWrite.append(linha + "\n"); 
+	public static void escritor(String path, String add) throws IOException {
+		BufferedWriter buffWrite = new BufferedWriter(new FileWriter(path,true));
+		buffWrite.append(add);
+		buffWrite.newLine();
 		buffWrite.close(); 
 	} 
 	
-	public void imprimeTabela(){
+	public static void imprimeTabela(char tabela[][], int tamanho){
 		for(int i=0; i<tamanho; i++){
 			for(int j=0; j<tamanho; j++){
 				System.out.print(tabela[i][j]);
@@ -74,15 +71,15 @@ public class Grupo {
 		}
 	}
 	
-	public boolean testaFechamento(){
+	public static boolean testaFechamento(char tabela1[][],int tam){
 		char c;
 		boolean sinal;
-		for(int i=0; i<tamanho; i++){
-			for(int j=0; j<tamanho; j++){
-				c=tabela[i][j];
+		for(int i=0; i<tam; i++){
+			for(int j=0; j<tam; j++){
+				c=tabela1[i][j];
 				sinal=false;
-				for(int k=0; k<tamanho; k++)
-					if(c==tabela[0][k]) sinal=true;
+				for(int k=0; k<tam; k++)
+					if(c==tabela1[0][k]) sinal=true;
 				if(!sinal)
 					return false;
 			}
@@ -90,44 +87,105 @@ public class Grupo {
 		return true;
 	}
 
-	public boolean testaAssociativa(){
-		for(int i=1; i<tamanho; i++)
-			for(int j=1; j<tamanho; j++)
-				for(int k=1; k<tamanho; k++)
-					if(tabela[tabeladeposicoes[i][j]][k]!=tabela[i][tabeladeposicoes[j][k]])
+	public static boolean testaAssociativa(char tabela1[][],int tabeladeposicoes1[][],int tam){
+		for(int i=1; i<tam; i++)
+			for(int j=1; j<tam; j++)
+				for(int k=1; k<tam; k++)
+					if(tabela1[tabeladeposicoes1[i][j]][k]!=tabela1[i][tabeladeposicoes1[j][k]])
 						return false;
 		return true;
 	}
 	
-	public boolean testaInversa(){
+	public static boolean testaInversa(char tabela1[][], int tam){
 		boolean sinal;
-		for(int i=0; i<tamanho; i++){
+		for(int i=0; i<tam; i++){
 			sinal=false;
-			for(int j=0; j<tamanho; j++)
-				if(tabela[i][j]=='1') sinal = true;
+			for(int j=0; j<tam; j++)
+				if(tabela1[i][j]=='1') sinal = true;
 			if (!sinal) return false;
 		}
 		return true;
 	} 
 	
-	public boolean testaGrupo(){
-		if(testaFechamento()) System.out.println("Grupo fechado");
-		else System.out.println("Grupo Não fechado");
-		if(testaAssociativa()) System.out.println("Grupo Associado");
-		else System.out.println("Grupo não associado");
-		if(testaInversa()) System.out.println("Todos os elementos possuem inversa");
+	public static boolean testaGrupo(char tabela1[][],int tabeladeposicoes1[][],int tam){
+		/*if(testaFechamento(tabela1, tam)) System.out.println("Grupo fechado");
+		else System.out.println("Grupo NÃ£o fechado");
+		if(testaAssociativa(tabela1, tabeladeposicoes1, tam)) System.out.println("Grupo Associado");
+		else System.out.println("Grupo nÃ£o associado");
+		if(testaInversa(tabela1, tam)) System.out.println("Todos os elementos possuem inversa");
 		else System.out.println("Nem todos os elementos possuem inversa");
-		
-		if(testaFechamento() && testaAssociativa() && testaInversa()) return true;
+		*/
+		if(testaFechamento(tabela1, tam) && testaAssociativa(tabela1, tabeladeposicoes1, tam) && testaInversa(tabela1, tam)) return true;
 		else return false;
 	}
 	
-	public static void main(String[] args) {
-		Grupo g = new Grupo("table 1.txt");
-		g.imprimeTabela();
+	public static void subgrupos(){
+		String n ="";
+		int i=0, j=0, cont=0;
+		char subtabela[][];
+		int subtabeladeposicoes[][];
+		//pegando todas as combinaÃ§Ãµes possÃ­veis
+		for(int x = 0; x < Math.pow(2,tamanho); x++){
+			n = Integer.toBinaryString(x);
+			for(i=n.length(); i<tamanho; i++)
+				n="0"+n;
+			char c;
+			//tamanho do subgrupo
+			cont=0;
+			for(int y = 0; y < n.length(); y++){
+				if(n.charAt(y) == '1') 
+					cont++;
+			}
+			subtabela = new char[cont][cont];
+			subtabeladeposicoes = new int[cont][cont];
+			i=0;
+			//preenchendo a tabela do subgrupo
+			for(int a = 0; a < tamanho; a++){
+				j=0;
+				for(int b = 0; b < tamanho; b++){
+					if(n.charAt(a) == '1' && n.charAt(b) == '1'){
+						subtabela[i][j] = tabela[a][b];
+						c=subtabela[i][j];
+						for(int k=0;k<j;k++)
+							if(c==subtabela[0][k])
+								subtabeladeposicoes[i][j]=k;
+						j++;
+					}
+				}
+				if(j>0) i++;
+			}
+			if(testaGrupo(subtabela, subtabeladeposicoes, cont)){
+				System.out.println("Subtabela");
+				imprimeTabela(subtabela, cont);
+				System.out.println("");
+				String add="";
+				for(int i1=0; i1<cont; i1++)
+					add+=subtabela[0][i1];
+				try {
+					escritor("Subgrupos.txt", add);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	public static void main(String[] args) throws IOException {
+		Grupo g = new Grupo("table 2.txt");
+		File file = new File("Subgrupos.txt");
+		if ( file.exists()) {
+		   file.delete();
+		}
+		g.imprimeTabela(g.tabela,g.tamanho);
 		//g.imprimeTabelaDePosicoes();
-		if(g.testaGrupo()) System.out.println("É grupo");
-		else System.out.println("Não é grupo");
+		if(g.testaGrupo(g.tabela,g.tabeladeposicoes,g.tamanho)) System.out.println("Ã‰ grupo");
+		else System.out.println("NÃ£o Ã© grupo");
+		g.subgrupos();
+		Grafo f = new Grafo();
+		f.leitor("Subgrupos.txt");
+		System.out.println("Aqui comeÃ§a a imprimir");
+		f.imprimeSubgrupos();
 	}
 
 }
