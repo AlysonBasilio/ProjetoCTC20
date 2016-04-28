@@ -23,7 +23,7 @@ public class Grafo {
 			for(int j=0; j<total; j++){
 				if(linha.equals(nos[j])){
 					sinal=true;
-					System.out.println("Essa porra deu igual:"+linha);
+					//System.out.println("Essa porra deu igual:"+linha);
 				}
 			}
 			if(!sinal){
