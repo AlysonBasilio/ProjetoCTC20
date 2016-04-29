@@ -13,17 +13,17 @@ public class Grupo {
 			leitor(path);
 			//Cria uma tabela que no lugar dos caracteres, tem a posicao de cada um na primeira linha da tabela
 			char c;
-			for(int i=1; i<tamanho; i++){
-				for(int j=1; j<tamanho; j++){
+			for(int i=0; i<tamanho; i++){
+				for(int j=0; j<tamanho; j++){
 					c=tabela[i][j];
 					for(int k=0;k<tamanho;k++)
 						if(c==tabela[0][k])
 							tabeladeposicoes[i][j]=k;
 				}
-				System.out.println("");
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			System.out.println("Erro na abertura do arquivo.");
 			e.printStackTrace();
 		}
 	}
@@ -56,16 +56,16 @@ public class Grupo {
 	public static void imprimeTabela(char tabela[][], int tamanho){
 		for(int i=0; i<tamanho; i++){
 			for(int j=0; j<tamanho; j++){
-				System.out.print(tabela[i][j]);
+				System.out.print(tabela[i][j]+" ");
 			}
 			System.out.println("");
 		}
 	}
 	
-	public void imprimeTabelaDePosicoes(){
-		for(int i=0; i<tamanho; i++){
-			for(int j=0; j<tamanho; j++){
-				System.out.print(tabeladeposicoes[i][j]);
+	public static void imprimeTabelaDePosicoes(int tabeladeposicoes1[][], int tam){
+		for(int i=0; i<tam; i++){
+			for(int j=0; j<tam; j++){
+				System.out.print(tabeladeposicoes1[i][j]+" ");
 			}
 			System.out.println("");
 		}
@@ -108,7 +108,9 @@ public class Grupo {
 	} 
 	
 	public static boolean testaGrupo(char tabela1[][],int tabeladeposicoes1[][],int tam){
-		/*if(testaFechamento(tabela1, tam)) System.out.println("Grupo fechado");
+		/*imprimeTabela(tabela1, tam);
+		imprimeTabelaDePosicoes(tabeladeposicoes1, tam);		
+		if(testaFechamento(tabela1, tam)) System.out.println("Grupo fechado");
 		else System.out.println("Grupo Não fechado");
 		if(testaAssociativa(tabela1, tabeladeposicoes1, tam)) System.out.println("Grupo Associado");
 		else System.out.println("Grupo não associado");
@@ -146,18 +148,21 @@ public class Grupo {
 					if(n.charAt(a) == '1' && n.charAt(b) == '1'){
 						subtabela[i][j] = tabela[a][b];
 						c=subtabela[i][j];
-						for(int k=0;k<j;k++)
-							if(c==subtabela[0][k])
-								subtabeladeposicoes[i][j]=k;
 						j++;
 					}
 				}
 				if(j>0) i++;
 			}
+			//Cria uma tabela que no lugar dos caracteres, tem a posicao de cada um na primeira linha da tabela
+			for(int w=0; w<cont; w++){
+				for(int s=0; s<cont; s++){
+					c=subtabela[w][s];
+					for(int k=0;k<cont;k++)
+						if(c==subtabela[0][k])
+							subtabeladeposicoes[w][s]=k;
+				}
+			}
 			if(testaGrupo(subtabela, subtabeladeposicoes, cont)){
-				System.out.println("Subtabela");
-				imprimeTabela(subtabela, cont);
-				System.out.println("");
 				String add="";
 				for(int i1=0; i1<cont; i1++)
 					add+=subtabela[0][i1];
@@ -179,13 +184,13 @@ public class Grupo {
 		}
 		g.imprimeTabela(g.tabela,g.tamanho);
 		//g.imprimeTabelaDePosicoes();
-		if(g.testaGrupo(g.tabela,g.tabeladeposicoes,g.tamanho)) System.out.println("É grupo");
-		else System.out.println("Não é grupo");
+		if(g.testaGrupo(g.tabela,g.tabeladeposicoes,g.tamanho)) System.out.println("Eh grupo");
+		else System.out.println("Nao eh grupo");
 		g.subgrupos();
 		Grafo f = new Grafo();
 		f.leitor("Subgrupos.txt");
-		System.out.println("Aqui começa a imprimir");
+		System.out.println("Aqui comeca a imprimir");
 		f.imprimeSubgrupos();
+		f.digrafo();
 	}
-
 }
