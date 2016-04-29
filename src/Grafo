@@ -43,30 +43,51 @@ public class Grafo {
 
     public static void digrafo() throws IOException {
     	Formatter arquivo;
+    	String aux="";
 		arquivo = new Formatter("Digraph.txt");
-		//seleciona o nó
-		arquivo.format("digraph G {\r\n\r\n");
-		for(int x = 0; x < total; x++){
-			//para evitar arestas redundantes
-			boolean redundante = true;
-			//compara o nó selecionado com cada nó
-			for(int y = x+1; y < total && redundante == true; y++){
-				boolean aresta = true;
-				//analisa se todos os caracteres do nó pertencem ao outro nó
-				for(int z = 0; z < nos[x].length() && aresta == true; z++){
-					aresta = false;
-					for(int w = 0; w < nos[y].length(); w++){
-						if(nos[x].charAt(z) == nos[y].charAt(w))
-							aresta = true;
-					}
-				}
-				if(aresta == true){
-					arquivo.format("\r\t\"%s\" -> \"%s\" \r\n", nos[x], nos[y]);
-					if(y+1 < total && nos[y].length() < nos[y+1].length())
-						redundante = false;
+		int matriz[][] = new int[total][total];
+		//inicializa matriz com zeros
+		for(int a=0; a<total; a++)
+			for(int b=0; b<total; b++)
+				matriz[a][b]=0;
+		//ordenar o nó
+		for(int i = total - 1; i > 0; i--){
+			for(int j = 0; j < i; j++){
+				if(nos[j].length() > nos[j+1].length()){
+					aux = nos[j];
+					nos[j] = nos[j+1];
+					nos[j+1] = aux; 
+					
 				}
 			}
 		}
+		//preenchimento da matriz
+		for(int x = 0; x<total; x++)
+			for(int y=x+1; y<total; y++){
+				boolean aresta = true;
+				for(int z=0; z<nos[x].length() && aresta == true; z++){
+					aresta=false;
+					for(int w=0; w<nos[y].length(); w++)
+						if(nos[x].charAt(z) == nos[y].charAt(w))
+							aresta = true;
+				}
+				if(aresta == true)
+					matriz[x][y]=1;
+			}
+		//eliminando os nós devido a transitividade
+		for(int c = 0; c<total; c++)
+			for(int d = c+1; d<total; d++)
+				if(matriz[c][d]==1){
+					for(int e = d+1; e<total; e++)
+						if(matriz[d][e]==1 && matriz[c][e]==1)
+							matriz[c][e] = 0;
+				}
+		//gravando as arestas em arquivo
+		arquivo.format("digraph G {\r\n\r\n");
+		for(int m = 0; m<total; m++)
+			for(int n = 0; n<total; n++)
+				if(matriz[m][n] == 1)
+					arquivo.format("\r\t\"%s\" -> \"%s\" \r\n", nos[m], nos[n]);
 		arquivo.format("\r\n}");
 		arquivo.close();
 	}
