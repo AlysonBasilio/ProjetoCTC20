@@ -191,5 +191,6 @@ public class Grupo {
 		f.leitor("Subgrupos.txt");
 		System.out.println("Aqui comeca a imprimir");
 		f.imprimeSubgrupos();
+		f.digrafo();
 	}
 }

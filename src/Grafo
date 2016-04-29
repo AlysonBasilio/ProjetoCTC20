@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Formatter;
 
 public class Grafo {
 	private static String nos[];
@@ -18,16 +19,17 @@ public class Grafo {
 		String linha = ""; 
 		linha = buffRead.readLine();
 		for(int i=0; i<MAX && linha != null; i++){
+			System.out.println("Linha "+i+": "+linha);
 			sinal=false;
 			for(int j=0; j<total; j++){
 				if(linha.equals(nos[j])){
 					sinal=true;
-					System.out.println("Essa porra deu igual:"+linha);
+					//System.out.println("Essa porra deu igual:"+linha);
 				}
 			}
 			if(!sinal){
-				nos[i]=linha;
-				total++;
+				if(!linha.equals("") && linha.charAt(0)=='1')
+					nos[total++]=linha;
 			}
 			linha = buffRead.readLine();
 		}
@@ -38,4 +40,35 @@ public class Grafo {
 		for(int i=0; i<total;i++)
 			System.out.println(nos[i]);
 	}
+
+    public static void digrafo() throws IOException {
+    	Formatter arquivo;
+		arquivo = new Formatter("Digraph.txt");
+		//seleciona o nó
+		arquivo.format("digraph G {\r\n\r\n");
+		for(int x = 0; x < total; x++){
+			//para evitar arestas redundantes
+			boolean redundante = true;
+			//compara o nó selecionado com cada nó
+			for(int y = x+1; y < total && redundante == true; y++){
+				boolean aresta = true;
+				//analisa se todos os caracteres do nó pertencem ao outro nó
+				for(int z = 0; z < nos[x].length() && aresta == true; z++){
+					aresta = false;
+					for(int w = 0; w < nos[y].length(); w++){
+						if(nos[x].charAt(z) == nos[y].charAt(w))
+							aresta = true;
+					}
+				}
+				if(aresta == true){
+					arquivo.format("\r\t\"%s\" -> \"%s\" \r\n", nos[x], nos[y]);
+					if(y+1 < total && nos[y].length() < nos[y+1].length())
+						redundante = false;
+				}
+			}
+		}
+		arquivo.format("\r\n}");
+		arquivo.close();
+	}
+
 }
